@@ -1,0 +1,33 @@
+version: "3.6"
+
+services:
+  db:
+    image: postgres:11.7-alpine
+    container_name: db
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+    networks:
+      - dockercompose
+
+  init:
+    build: ./initialization
+    restart: on-failure
+    depends_on:
+      - db
+    networks:
+      - dockercompose
+
+  api:
+    build: ./api/
+    ports:
+      - "5000:5000"
+    restart: always
+    networks:
+      - dockercompose
+    depends_on:
+      - db
+
+networks:
+  dockercompose:
